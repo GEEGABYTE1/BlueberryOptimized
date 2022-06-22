@@ -7,6 +7,7 @@ const abi = ContractJson.abi
 
 // Discord Initialization
 const Discord = require('discord.js')
+const { hexZeroPad } = require('ethers/lib/utils')
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 const prefix = '-'
 
@@ -103,10 +104,38 @@ client.on('message', async function (message) {
             const setTx2 = await userBallot.delegate(goal_address, options)
             await setTx2.wait()
             message.channel.send(`${goal_address} was delegated a vote from ${our_address}`)
+            console.log(setTx2)
         } catch (err) {
             message.member.send('There was an error processing the delegation')
             message.member.send('Please review documentation if you require assistance')
         }
+
+    } else if (command === 'vote') { // vote your_user_address index
+
+        try {
+            let lst_of_args = args.slice(1)
+            let address = lst_of_args[0]
+            let rel_private_key = wallets[address]
+
+            const rel_user_wallet = new hre.ethers.Wallet(rel_private_key, alchemy)
+            const rel_userBallot = new hre.ethers.Contract (
+            process.env.TEMP_CONTRACT_ADDRESS,
+            abi,
+            rel_user_wallet
+            )
+        
+            let index = lst_of_args[1]
+            let indexed_num = parseInt(index, 10)
+            const setTx3 = await rel_userBallot.vote(indexed_num, options)
+            await setTx3.wait()
+            message.channel.send(`${address} has successfully voted`)
+            console.log(setTx3)
+        } catch (err) {
+            message.member.send('There was an error processing your vote')
+            let limit = propsals.length
+            message.member.send(`Make sure you have inputted the right index: 0 <= x < ${limit}`)
+        }
+        
 
     }
 
