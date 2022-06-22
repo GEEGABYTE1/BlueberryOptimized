@@ -111,8 +111,8 @@ contract Ballot {
      */
     function vote(uint proposal) public {
         Voter storage sender = voters[msg.sender];
-        //require(sender.weight != 0, "Has no right to vote");
-        //require(!sender.voted, "Already voted.");
+        require(sender.weight != 0, "Has no right to vote");
+        require(!sender.voted, "Already voted.");
         sender.voted = true;
         sender.vote = proposal;
 

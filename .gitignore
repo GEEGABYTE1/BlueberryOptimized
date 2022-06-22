@@ -6,6 +6,7 @@ typechain
 package-lock.json
 package.json
 test/tempCodeRunnerFile.js
+scripts/tempCodeRunnerFile.js
 
 
 #Hardhat files

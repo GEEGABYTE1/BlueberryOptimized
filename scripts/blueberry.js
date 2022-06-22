@@ -1,12 +1,32 @@
+const { ContractFactory } = require('ethers')
 const hre = require('hardhat')
 var Web3 = require('web3')
 var web3 = new Web3(Web3.givenProvider || process.env.API_URL)
+const ContractJson = require('../artifacts/contracts/Ballot.sol/Ballot.json')
+const abi = ContractJson.abi
 
+// Discord Initialization
 const Discord = require('discord.js')
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
-
-
 const prefix = '-'
+
+// Contract Connection Initialization
+const alchemy = new hre.ethers.providers.AlchemyProvider(
+    'goerli',
+    process.env.ALCHEMY_API_KEY
+)
+const headWallet = new hre.ethers.Wallet(process.env.PRIVATE_KEY, alchemy)
+const headBallot = new hre.ethers.Contract(
+    process.env.TEMP_CONTRACT_ADDRESS,
+    abi,
+    headWallet
+)
+let options = {'gasPrice': 21000, 'gasLimit':320000}
+
+// Voting Initialization
+let proposals = ['prop1']
+
+
 
 
 async function running () {
@@ -40,7 +60,7 @@ client.on('message', async function (message) {
             if (check_address === true) {
                 
                 user_wallet = check_address
-                message.channel.send('You have signed in')
+                
                 message.delete()
                 message.member.send('**Note**: to send votes, it is needed that you put in your private_key')
                 message.member.send('BlueBerry or its developers will never use or even access private_keys at all.')
@@ -52,12 +72,26 @@ client.on('message', async function (message) {
                 console.log(message.author.username)
                 private_address = lst_of_args[1]
                 wallets[String(address)] = private_address
+
+                setTx1 = await headBallot.giveRightToVote(String(address), options)
+                await setTx1.wait()
+                console.log(setTx1)
+                message.channel.send('You have signed in')
+
+
+                
                 
             } else {
               message.member.send(`Your wallet: ${address} was invalid!`)
             }
         }
+
     }
+
+
+
+
+
 })
 
 

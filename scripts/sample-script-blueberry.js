@@ -5,7 +5,7 @@ var web3 = new Web3(Web3.givenProvider || process.env.API_URL)
 
 async function main() {
 
-    test_props = ['prop1', 'prop2', 'prop3']
+    test_props = ['prop1']
     hexed = []
 
     for (let test_prop_idx = 0; test_prop_idx <= test_props.length; test_props++) {
