@@ -64,8 +64,6 @@ function partition_for_ballot (proposals=temp_proposals) {
 }
     
 
-
-
 function create_new_ballot (strings) {
     try {
         let hexed = []
@@ -246,6 +244,26 @@ client.on('message', async function (message) {
         rel_string = lst_of_args[0]
         temp_proposals.push(rel_string)
         message.channel.send(`${rel_string} has been put into consideration for proposals`)
+
+    } else if (command === 'view') {
+        message.channel.send('-----------------------------------')
+        temp_proposal_keys = Object.keys(temp_proposals)
+        if (temp_proposal_keys.length === 0) {
+           message.channel.send('There are no Proposals been made yet') 
+        } else {
+            let key_idx =0 
+            for (key_idx; key_idx <= temp_proposals_keys.length; key_idx++) {
+                key_string = temp_proposal_keys[key_idx]
+                if (key_string === 'prop1') {
+                    message.channel.send(`: ${prop1} *Not a legitimate Ballot (only for initialization of the Bot)`)
+                } else if (key_string === undefined) {} else {
+                    message.channel.send(`: ${key_string}`)
+                }
+                     
+            }
+            message.channel.send('-----------------------------------') 
+        }
+
     }
 
 
