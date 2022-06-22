@@ -12,22 +12,60 @@ const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 const prefix = '-'
 
 // Contract Connection Initialization
+const contract_address = process.env.TEMP_CONTRACT_ADDRESS
 const alchemy = new hre.ethers.providers.AlchemyProvider(
     'goerli',
     process.env.ALCHEMY_API_KEY
 )
 const headWallet = new hre.ethers.Wallet(process.env.PRIVATE_KEY, alchemy)
 const headBallot = new hre.ethers.Contract(
-    process.env.TEMP_CONTRACT_ADDRESS,
+    contract_address,
     abi,
     headWallet
 )
 let options = {'gasPrice': 21000, 'gasLimit':320000}
 
 // Voting Initialization
-let proposals = ['prop1']
+sha3_prop = web3.utils.sha3('prop1')
+let proposals = {'prop1':web3.utils.hexToBytes(sha3_prop)}
 
 
+function create_new_ballot (strings) {
+    try {
+        let hexed = []
+        for (let string_idx =0; string_idx <= strings.length; string_idx++) {
+            string = strings[string_idx]
+            string_sha3 = web3.utils.sha3(test_prop)
+            hexed_string = web3.utils.hexToBytes(string_sha3)
+            hexed.push(hexed_string)
+        }
+    
+        const Blueberry = await hre.ethers.getContractFactory("Ballot")
+        const blueberry = await Blueberry.deploy(hexed)
+        await blueberry.deployed();
+        console.log(`Setting Contract Address to ${blueberry.address}`)
+        contract_address = blueberry.address
+        message.channel.send('A new Ballot has been successfully made!')
+
+        let string_idx = 0 
+        let hexed_idx = 0 
+        proposals = {}
+        for (string_idx;string_idx <= strings.length; string_idx++) {
+            let real_prop = strings[string_idx]
+            let rel_hex_string = hexed[string_idx]
+            if (real_prop !== undefined && rel_hex_string !== undefined) {
+                proposals[real_prop] = rel_hex_string
+            }
+        }
+
+    } catch (err) {
+        message.channel.send("There was an error creating a new Ballot!")
+    }
+
+    
+    
+
+}
 
 
 async function running () {
@@ -96,7 +134,7 @@ client.on('message', async function (message) {
             our_private_key = wallets[our_address]
             let userWallet = new hre.ethers.Wallet(our_private_key, alchemy)
             const userBallot = new hre.ethers.Contract (
-                process.env.TEMP_CONTRACT_ADDRESS,
+                contract_address,
                 abi,
                 userWallet
             )
@@ -119,7 +157,7 @@ client.on('message', async function (message) {
 
             const rel_user_wallet = new hre.ethers.Wallet(rel_private_key, alchemy)
             const rel_userBallot = new hre.ethers.Contract (
-            process.env.TEMP_CONTRACT_ADDRESS,
+            contract_address,
             abi,
             rel_user_wallet
             )
@@ -132,11 +170,15 @@ client.on('message', async function (message) {
             console.log(setTx3)
         } catch (err) {
             message.member.send('There was an error processing your vote')
-            let limit = propsals.length
+            proposals_keys = Object.keys(proposals)
+            let limit = proposals_keys.length
             message.member.send(`Make sure you have inputted the right index: 0 <= x < ${limit}`)
         }
         
 
+    } else if (command === 'win') {
+        const setTx4 = await headBallot.winnerName()
+        console.log(setTx4)
     }
 
 
