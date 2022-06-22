@@ -5,6 +5,7 @@ coverage.json
 typechain
 package-lock.json
 package.json
+test/tempCodeRunnerFile.js
 
 
 #Hardhat files
