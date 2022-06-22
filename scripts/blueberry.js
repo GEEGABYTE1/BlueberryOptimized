@@ -86,6 +86,28 @@ client.on('message', async function (message) {
             }
         }
 
+    } else if (command === 'delegate') {    // delegate your_user_address goal_user_address
+        try {
+            lst_of_addresses = args.slice(1)
+            our_address = lst_of_addresses[0]
+            goal_address = lst_of_addresses[1]
+
+            our_private_key = wallets[our_address]
+            let userWallet = new hre.ethers.Wallet(our_private_key, alchemy)
+            const userBallot = new hre.ethers.Contract (
+                process.env.TEMP_CONTRACT_ADDRESS,
+                abi,
+                userWallet
+            )
+
+            const setTx2 = await userBallot.delegate(goal_address, options)
+            await setTx2.wait()
+            message.channel.send(`${goal_address} was delegated a vote from ${our_address}`)
+        } catch (err) {
+            message.member.send('There was an error processing the delegation')
+            message.member.send('Please review documentation if you require assistance')
+        }
+
     }
 
 
