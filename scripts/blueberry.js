@@ -29,6 +29,42 @@ let options = {'gasPrice': 21000, 'gasLimit':320000}
 sha3_prop = web3.utils.sha3('prop1')
 let proposals = {'prop1':web3.utils.hexToBytes(sha3_prop)}
 
+// Temp Proposals 
+
+let temp_proposals = [] // Need 3 proposals to create ballot
+
+
+function partition_for_ballot (proposals=temp_proposals) {
+    
+    if (proposals.length === 0) {
+        return false
+    } else {
+        let chosen_proposals = []
+        let index = 0
+        let length_of_proposals = proposals.length
+        let limit = 3 
+        if (length_of_proposals < 3) {
+            limit = length_of_proposals - 1
+        }
+    
+    
+        for (index; index <= limit; index ++) {
+            try {
+                random_idx = Math.floor(Math.random() * length_of_proposals++) 
+                random_proposal = proposals[random_idx]
+                chosen_proposals.push(random_proposal)
+            } catch (err) {
+                console.log('Index was bigger than Length')
+            }
+    
+        }
+    
+        return chosen_proposals
+    }
+}
+    
+
+
 
 function create_new_ballot (strings) {
     try {
@@ -57,6 +93,7 @@ function create_new_ballot (strings) {
                 proposals[real_prop] = rel_hex_string
             }
         }
+        
 
     } catch (err) {
         message.channel.send("There was an error creating a new Ballot!")
@@ -75,15 +112,22 @@ async function running () {
 
     await client.once('ready', () => {
         console.log('Bluberry is online')
+        
     })
 }
 
 let wallets = {}
 
+const ballot_creation_interval = setInterval(create_new_ballot(partition_for_ballot()), 300000) // 5 Minutes
+
 client.on('message', async function (message) {
     const args = message.content.slice(prefix.length).split(/ +/)
     const command = args[0]
-    
+    if (ballot_creation_interval === 0) {
+        message.channel.send('There were no propositions made, thus no ballot was made!')
+    } else {
+        message.channel.send('Propositions are taken into consideration')
+    }
 
 
     const list = client.guilds.cache.get('977377262984908845')  
@@ -178,7 +222,30 @@ client.on('message', async function (message) {
 
     } else if (command === 'win') {
         const setTx4 = await headBallot.winnerName()
-        console.log(setTx4)
+        winner_hash = setTx4
+        if (winner_hash === undefined || null) {
+            message.channel.send('There were no votes made')
+        } else {
+            temp_proposal_keys = Object.keys(temp_proposals)
+            let key_idx =0 
+            for (key_idx; key_idx <= temp_proposals_keys.length; key_idx++) {
+                key_string = temp_proposal_keys[key_idx]
+                value_hash = temp_proposals[key_string]
+                if (value_hash === winner_hash) {
+                    message.channel.send(`The Winner of the Ballot is; ${key_string}`)
+                } 
+            }
+        }
+
+        proposals = {'prop1':web3.utils.hexToBytes(sha3_prop)}
+        message.channel.send('The Proposals have been Re-set')
+
+
+    } else if (command === 'propose') { // propose 'string'
+        lst_of_args = args.slice(1)
+        rel_string = lst_of_args[0]
+        temp_proposals.push(rel_string)
+        message.channel.send(`${rel_string} has been put into consideration for proposals`)
     }
 
 
