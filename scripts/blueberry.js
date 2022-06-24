@@ -33,6 +33,8 @@ let proposals = {'prop1':web3.utils.hexToBytes(sha3_prop)}
 let temp_proposals = [] // Need 3 proposals to create ballot
 
 
+
+
 function partition_for_ballot (proposals=temp_proposals) {
     
     if (proposals.length === 0) {
@@ -116,6 +118,20 @@ async function running () {
 let wallets = {}
 var time = 300000;
 
+const check_user_sign_in = (address, private_key=undefined) => {
+    wallet_addresses = Object.keys(wallets)
+    addres_found = false
+    let wallet_idx = 0 
+    for (wallet_idx; wallet_idx <= wallet_addresses.length; wallet_idx++) {
+        rel_address = wallet_addresses[wallet_idx]
+        if (rel_address === address) {
+            return true
+        }
+    }
+
+    return false
+}
+
 // 5 Minutes
 
 const ballot_creation_interval = setInterval(create_new_ballot(partition_for_ballot()), time) 
@@ -174,113 +190,152 @@ client.on('message', async function (message) {
         }
 
     } else if (command === 'delegate') {    // delegate your_user_address goal_user_address
-        try {
-            lst_of_addresses = args.slice(1)
-            our_address = lst_of_addresses[0]
-            goal_address = lst_of_addresses[1]
 
-            our_private_key = wallets[our_address]
-            let userWallet = new hre.ethers.Wallet(our_private_key, alchemy)
-            const userBallot = new hre.ethers.Contract(
-                contract_address,
-                abi,
-                userWallet
-            )
-
-            const setTx2 = await userBallot.delegate(goal_address, options)
-            await setTx2.wait()
-            message.channel.send(`${goal_address} was delegated a vote from ${our_address}`)
-            console.log(setTx2)
-        } catch (err) {
-            message.member.send('There was an error processing the delegation')
-            message.member.send('Please review documentation if you require assistance')
+        var sign_in_result = check_user_sign_in()
+        if (sign_in_result === false) {
+            message.member.send('You are currently not signed in with Blueberry to access the Voting System')
+            message.member.send('In the discord server, type **-sign_in** to sign in for votes!')
+        } else {
+            try {
+                lst_of_addresses = args.slice(1)
+                our_address = lst_of_addresses[0]
+                goal_address = lst_of_addresses[1]
+    
+                our_private_key = wallets[our_address]
+                let userWallet = new hre.ethers.Wallet(our_private_key, alchemy)
+                const userBallot = new hre.ethers.Contract(
+                    contract_address,
+                    abi,
+                    userWallet
+                )
+    
+                const setTx2 = await userBallot.delegate(goal_address, options)
+                await setTx2.wait()
+                message.channel.send(`${goal_address} was delegated a vote from ${our_address}`)
+                console.log(setTx2)
+            } catch (err) {
+                message.member.send('There was an error processing the delegation')
+                message.member.send('Please review documentation if you require assistance')
+            } 
         }
+
 
     } else if (command === 'vote') { // vote your_user_address index
 
-        try {
-            let lst_of_args = args.slice(1)
-            let address = lst_of_args[0]
-            let rel_private_key = wallets[address]
-
-            const rel_user_wallet = new hre.ethers.Wallet(rel_private_key, alchemy)
-            const rel_userBallot = new hre.ethers.Contract (
-            contract_address,
-            abi,
-            rel_user_wallet
-            )
-        
-            let index = lst_of_args[1]
-            let indexed_num = parseInt(index, 10)
-            const setTx3 = await rel_userBallot.vote(indexed_num, options)
-            await setTx3.wait()
-            message.channel.send(`${address} has successfully voted`)
-            console.log(setTx3)
-        } catch (err) {
-            message.member.send('There was an error processing your vote')
-            proposals_keys = Object.keys(proposals)
-            let limit = proposals_keys.length
-            message.member.send(`Make sure you have inputted the right index: 0 <= x < ${limit}`)
+        var sign_in_result = check_user_sign_in()
+        if (sign_in_result === false) {
+            message.member.send('You are currently not signed in with Blueberry to access the Voting System')
+            message.member.send('In the discord server, type **-sign_in** to sign in for votes!')
+        } else {
+            try {
+                let lst_of_args = args.slice(1)
+                let address = lst_of_args[0]
+                let rel_private_key = wallets[address]
+    
+                const rel_user_wallet = new hre.ethers.Wallet(rel_private_key, alchemy)
+                const rel_userBallot = new hre.ethers.Contract (
+                contract_address,
+                abi,
+                rel_user_wallet
+                )
+            
+                let index = lst_of_args[1]
+                let indexed_num = parseInt(index, 10)
+                const setTx3 = await rel_userBallot.vote(indexed_num, options)
+                await setTx3.wait()
+                message.channel.send(`${address} has successfully voted`)
+                console.log(setTx3)
+            } catch (err) {
+                message.member.send('There was an error processing your vote')
+                proposals_keys = Object.keys(proposals)
+                let limit = proposals_keys.length
+                message.member.send(`Make sure you have inputted the right index: 0 <= x < ${limit}`)
+            }
         }
+
         
 
     } else if (command === 'win') {
-        const setTx4 = await headBallot.winnerName()
-        winner_hash = setTx4
-        if (winner_hash === undefined || null) {
-            message.channel.send('There were no votes made')
+        var sign_in_result = check_user_sign_in()
+        if (sign_in_result === false) {
+            message.member.send('You are currently not signed in with Blueberry to access the Voting System')
+            message.member.send('In the discord server, type **-sign_in** to sign in for votes!')
         } else {
-            temp_proposal_keys = Object.keys(temp_proposals)
-            let key_idx = 0 
-            for (key_idx; key_idx <= temp_proposals_keys.length; key_idx++) {
-                key_string = temp_proposal_keys[key_idx]
-                value_hash = temp_proposals[key_string]
-                if (value_hash === winner_hash) {
-                    message.channel.send(`The Winner of the Ballot is; ${key_string}`)
-                } 
+            const setTx4 = await headBallot.winnerName()
+            winner_hash = setTx4
+            if (winner_hash === undefined || null) {
+                message.channel.send('There were no votes made')
+            } else {
+                temp_proposal_keys = Object.keys(temp_proposals)
+                let key_idx = 0 
+                for (key_idx; key_idx <= temp_proposals_keys.length; key_idx++) {
+                    key_string = temp_proposal_keys[key_idx]
+                    value_hash = temp_proposals[key_string]
+                    if (value_hash === winner_hash) {
+                        message.channel.send(`The Winner of the Ballot is; ${key_string}`)
+                    } 
+                }
             }
+    
+            proposals = {'prop1':web3.utils.hexToBytes(sha3_prop)}
+            message.channel.send('The Proposals have been Re-set')  
         }
 
-        proposals = {'prop1':web3.utils.hexToBytes(sha3_prop)}
-        message.channel.send('The Proposals have been Re-set')
 
 
     } else if (command === 'propose') { // propose 'string'
-        lst_of_args = args.slice(1)
-        rel_string = lst_of_args[0]
-        temp_proposals.push(rel_string)
-        message.channel.send(`${rel_string} has been put into consideration for proposals`)
+        var sign_in_result = check_user_sign_in()
+        if (sign_in_result === false) {
+            message.member.send('You are currently not signed in with Blueberry to access the Voting System')
+            message.member.send('In the discord server, type **-sign_in** to sign in for votes!')
+        } else {
+            lst_of_args = args.slice(1)
+            rel_string = lst_of_args[0]
+            temp_proposals.push(rel_string)
+            message.channel.send(`${rel_string} has been put into consideration for proposals`)
+        }
+
 
     } else if (command === 'view') {
-        message.channel.send('-----------------------------------')
-        temp_proposal_keys = Object.keys(temp_proposals)
-        if (temp_proposal_keys.length === 0) {
-           message.channel.send('There are no Proposals been made yet') 
+        var sign_in_result = check_user_sign_in()
+        if (sign_in_result === false) {
+            message.member.send('You are currently not signed in with Blueberry to access the Voting System')
+            message.member.send('In the discord server, type **-sign_in** to sign in for votes!')
         } else {
-            let key_idx =0 
-            for (key_idx; key_idx <= temp_proposals_keys.length; key_idx++) {
-                key_string = temp_proposal_keys[key_idx]
-                if (key_string === 'prop1') {
-                    message.channel.send(`: ${prop1} *Not a legitimate Ballot (only for initialization of the Bot)`)
-                } else if (key_string === undefined) {} else {
-                    message.channel.send(`: ${key_string}`)
+            message.channel.send('-----------------------------------')
+            temp_proposal_keys = Object.keys(temp_proposals)
+            if (temp_proposal_keys.length === 0) {
+               message.channel.send('There are no Proposals been made yet') 
+            } else {
+                let key_idx =0 
+                for (key_idx; key_idx <= temp_proposals_keys.length; key_idx++) {
+                    key_string = temp_proposal_keys[key_idx]
+                    if (key_string === 'prop1') {
+                        message.channel.send(`: ${prop1} *Not a legitimate Ballot (only for initialization of the Bot)`)
+                    } else if (key_string === undefined) {} else {
+                        message.channel.send(`: ${key_string}`)
+                    }
+                         
                 }
-                     
+                message.channel.send('-----------------------------------') 
             }
-            message.channel.send('-----------------------------------') 
+    
         }
 
     } else if (command === 'time') { // time 'minutes'
-        lst_of_args = args.slice(1)
-        time_string = lst_of_args[0]
-        minute_int = parseInt(time_string, 10)        // rounded by 10
-        seconds = minute_int * 60
-        milliseconds = seconds * 1000 
-        time = milliseconds
-        message.channel.send(`Time for Ballot Creation is Successfully set to: ${time_string} minutes!`)
-        
-
-        
+        var sign_in_result = check_user_sign_in()
+        if (sign_in_result === false) {
+            message.member.send('You are currently not signed in with Blueberry to access the Voting System')
+            message.member.send('In the discord server, type **-sign_in** to sign in for votes!')
+        } else {
+            lst_of_args = args.slice(1)
+            time_string = lst_of_args[0]
+            minute_int = parseInt(time_string, 10)        // rounded by 10
+            seconds = minute_int * 60
+            milliseconds = seconds * 1000 
+            time = milliseconds
+            message.channel.send(`Time for Ballot Creation is Successfully set to: ${time_string} minutes!`)
+        }
 
 
     } 
