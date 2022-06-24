@@ -11,7 +11,8 @@ Blueberry does allow for versatile voting smart contracts, however, in its beta 
 The integration of the bot process into a server remains the same (after all, it is a discord bot!). If one requires any help, they can visit the website: [here] (https://www.alphr.com/add-bots-discord-server/)
 
 A Base `Ballot.sol` smart contract is already integrated within the bot, and therefore, will run the voting proposals and processes based on the initial smart contract. However, if the server wants to alter the smart contract, they must create a `.env` file and set:
-`CONTRACT_ADDRESS='contract_address_from_deployment`, within the directory of the bot.
+`CONTRACT_ADDRESS='contract_address_from_deployment`, within the directory of the bot. Every time a ballot is created, the same contract will be deployed, and thus, it must be noted by the server of which contract to integrate as it becomes challenging to shift contracts. 
+
 
 **Note**: Since the bot is under beta, `.env` variables on the script on Github is yet to change.
 
