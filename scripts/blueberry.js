@@ -30,7 +30,6 @@ sha3_prop = web3.utils.sha3('prop1')
 let proposals = {'prop1':web3.utils.hexToBytes(sha3_prop)}
 
 // Temp Proposals 
-
 let temp_proposals = [] // Need 3 proposals to create ballot
 
 

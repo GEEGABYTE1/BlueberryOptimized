@@ -1,15 +1,18 @@
-# Basic Sample Hardhat Project
+# Blueberry
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+A discord bot that allows servers to convert themselves into fully-autonomous voting DAOs. Blueberry allows for servers to have
+their voting systems be run by Ethereum either through L1 or L2 networks. 
 
-Try running some of the following tasks:
+Blueberry does allow for versatile voting smart contracts, however, in its beta stage, due to the commands that are programmed, the bot can only take basic commands of `Ballot.sol`. (View `Ballot.sol` to get an idea of the functions). Moreover, custom tokens are compatiable as long as the voting actions are completely synchronous with the custom token - <h>the bot cannot take separate contracts!</h>.
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
+
+
+
+# Pre-Installation
+
+
+
+# Commands
+
+
+# Errors
