@@ -41,7 +41,46 @@ Moreover, the wallet address that has initialized the ballots or smart contract,
 
 ## Vote
 
+Discord Bot Command: `-vote [WALLET_ADDRESS] [INDEX]` 
 
+Allows users to vote on a ballot. The index must be between `0 <= x < n(proposals)` where `n = number of proposals in the ballot`. If the index exceeds the length or is not a **digit**, the transaction will fail. 
 
+As seen by voting, when initializing a contract or a ballot, there must be a list of proposals within one ballot. View (*Propose*) for more information regarding initializing ballots. 
+
+## Win
+
+Discord Bot Command: `-win`
+
+Outputs the proposal that has won. This can only be outputted when there are votes made and if there were proposals. Failure to create votes will either fail transaction or will output data that is not relevant nor accurate.
+
+## Propose
+
+Discord Bot Command: `-propose 'string`.
+
+The `string` represents the content of the proposal. All users will have the ability to submit a proposal, but will not always ensure that it will be submitted to the ballot.
+
+The base time interval for every ballot to deployed is 5 minuttes. However, it can be changed with the command `-time 'minutes'`. This will set the interval time for ballot deployment.
+
+For ballots, there are at most 3 proposals that can be added. In turn, this means that a user has a `3/n` chance of making their proposal on the ballot, where `n = number of proposals submitted`. Though, if there are less than 3 proposals that have been submitted, by nature, all proposals will be added to the ballot.
+
+After a `-win` has been declared, all proposals related to the ballot will be overriden.
+
+## Time
+
+Discord Bot Command: `-time 'minutes'`.
+
+Sets the time interval for ballots to deploy. The default is 5 minutes. `minutes` must be a number (i.e, 2, 4, 5, 10), in order for the command to work.
 
 # Errors
+
+When it comes to general errors, the most common ones occur when users do not have much eth in their wallet. Although, the transactions are free, they must taken into consideration gas prices. 
+
+Another common error is failure to understand how the command works or smart contract development flaws. In such cases, the developer should be contacted.
+
+# More Information
+
+Developer with Ethers, Web3, Alchemy API
+
+Questions, comments, or reporting a bug? Visit my [website](www.jaivalpatel.com) to find places to contact me!
+
+Made by Jaival Patel 🦖

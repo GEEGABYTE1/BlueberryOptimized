@@ -134,8 +134,7 @@ const check_user_sign_in = (address, private_key=undefined) => {
 
 // 5 Minutes
 
-const ballot_creation_interval = setInterval(create_new_ballot(partition_for_ballot()), time) 
-ballot_creation_interval()
+
 
 client.on('message', async function (message) {
     const args = message.content.slice(prefix.length).split(/ +/)
@@ -279,6 +278,7 @@ client.on('message', async function (message) {
     
             proposals = {'prop1':web3.utils.hexToBytes(sha3_prop)}
             message.channel.send('The Proposals have been Re-set')  
+            
         }
 
 
@@ -340,6 +340,8 @@ client.on('message', async function (message) {
             milliseconds = seconds * 1000 
             time = milliseconds
             message.channel.send(`Time for Ballot Creation is Successfully set to: ${time_string} minutes!`)
+            setInterval(create_new_ballot(partition_for_ballot()), time) 
+
         }
 
 
