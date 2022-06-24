@@ -354,6 +354,6 @@ client.on('message', async function (message) {
 })
 
 
-client.login('OTc3OTU2OTQ0NDQwNjIzMTU1.Gi73KR.1DQ6M3S8J4hGz0iC_3ub763AfdKnAHmlsVuW_Y')
+client.login(process.env.BOT_TOKEN)
 
 running()
