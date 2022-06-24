@@ -21,5 +21,17 @@ Blueberry's node provider is Alchmey, and is currently running on the Goerli tes
 
 # Commands
 
+Blueberry comes with pre-set Commands in its beta stage that revolve only around voting and creating ballots. Such commnads currently include:
+
+## Sign In
+
+Discord Bot Command: `-sign_in [WALLET_ADDRESS] [PRIVATE_KEY]`.
+
+This is the first command all users should type in when joining a discord server to be apart of the server vote. This in-turn, will let users type in commands that will let them interact with the smart contract.
+
+*Note*: Blueberry does not keep the private address of the user and hides it on the discord server by deleting the ouput on the server. The private key is only needed to allow users to interact with the smart contract with a Wallet Object, which requires their private address.
+
+
+
 
 # Errors
