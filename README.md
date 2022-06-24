@@ -31,6 +31,16 @@ This is the first command all users should type in when joining a discord server
 
 *Note*: Blueberry does not keep the private address of the user and hides it on the discord server by deleting the ouput on the server. The private key is only needed to allow users to interact with the smart contract with a Wallet Object, which requires their private address.
 
+## Delegate
+
+Discord Bot Command: `-delegate [SENDER_WALLET_ADDRESS] [RECEIVER_WALLET_ADDRESS]`.
+
+Allows users to delegate (or send) their votes to a desired user that has not voted. It should *noted* that the **sender* user must not have yet voted, otherwise, the transaction will fail.
+
+Moreover, the wallet address that has initialized the ballots or smart contract, cannot delegate themselves either to ensure that there is no circular voting.
+
+## Vote
+
 
 
 
