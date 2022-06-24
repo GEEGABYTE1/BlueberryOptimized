@@ -115,8 +115,12 @@ async function running () {
 }
 
 let wallets = {}
+var time = 300000;
 
-const ballot_creation_interval = setInterval(create_new_ballot(partition_for_ballot()), 300000) // 5 Minutes
+// 5 Minutes
+
+const ballot_creation_interval = setInterval(create_new_ballot(partition_for_ballot()), time) 
+ballot_creation_interval()
 
 client.on('message', async function (message) {
     const args = message.content.slice(prefix.length).split(/ +/)
@@ -130,6 +134,9 @@ client.on('message', async function (message) {
 
     const list = client.guilds.cache.get('977377262984908845')  
 
+    if (time === undefined) {
+        message.channel.send('Please set a Ballot Time Delta to Allow for Recurring and Autonomous Voting by typing **-time**!')
+    } 
     if (command === 'sign_in') {                                                    // sign_in wallet_address private_key
         if (message.member.roles.cache.has('978003617363681440')) {
             message.channel.send('You are already signed in!')
@@ -175,7 +182,7 @@ client.on('message', async function (message) {
 
             our_private_key = wallets[our_address]
             let userWallet = new hre.ethers.Wallet(our_private_key, alchemy)
-            const userBallot = new hre.ethers.Contract (
+            const userBallot = new hre.ethers.Contract(
                 contract_address,
                 abi,
                 userWallet
@@ -225,7 +232,7 @@ client.on('message', async function (message) {
             message.channel.send('There were no votes made')
         } else {
             temp_proposal_keys = Object.keys(temp_proposals)
-            let key_idx =0 
+            let key_idx = 0 
             for (key_idx; key_idx <= temp_proposals_keys.length; key_idx++) {
                 key_string = temp_proposal_keys[key_idx]
                 value_hash = temp_proposals[key_string]
@@ -264,7 +271,20 @@ client.on('message', async function (message) {
             message.channel.send('-----------------------------------') 
         }
 
-    }
+    } else if (command === 'time') { // time 'minutes'
+        lst_of_args = args.slice(1)
+        time_string = lst_of_args[0]
+        minute_int = parseInt(time_string, 10)        // rounded by 10
+        seconds = minute_int * 60
+        milliseconds = seconds * 1000 
+        time = milliseconds
+        message.channel.send(`Time for Ballot Creation is Successfully set to: ${time_string} minutes!`)
+        
+
+        
+
+
+    } 
 
 
 
