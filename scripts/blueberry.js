@@ -302,23 +302,28 @@ client.on('message', async function (message) {
             message.member.send('You are currently not signed in with Blueberry to access the Voting System')
             message.member.send('In the discord server, type **-sign_in** to sign in for votes!')
         } else {
-            message.channel.send('-----------------------------------')
-            temp_proposal_keys = Object.keys(temp_proposals)
-            if (temp_proposal_keys.length === 0) {
-               message.channel.send('There are no Proposals been made yet') 
+            if (temp_proposals.length === 0) {
+                message.channel.send('There were no proposals made, so a winner was not declared')
             } else {
-                let key_idx =0 
-                for (key_idx; key_idx <= temp_proposals_keys.length; key_idx++) {
-                    key_string = temp_proposal_keys[key_idx]
-                    if (key_string === 'prop1') {
-                        message.channel.send(`: ${prop1} *Not a legitimate Ballot (only for initialization of the Bot)`)
-                    } else if (key_string === undefined) {} else {
-                        message.channel.send(`: ${key_string}`)
+                message.channel.send('-----------------------------------')
+                temp_proposal_keys = Object.keys(temp_proposals)
+                if (temp_proposal_keys.length === 0) {
+                   message.channel.send('There are no Proposals been made yet') 
+                } else {
+                    let key_idx =0 
+                    for (key_idx; key_idx <= temp_proposals_keys.length; key_idx++) {
+                        key_string = temp_proposal_keys[key_idx]
+                        if (key_string === 'prop1') {
+                            message.channel.send(`: ${prop1} *Not a legitimate Ballot (only for initialization of the Bot)`)
+                        } else if (key_string === undefined) {} else {
+                            message.channel.send(`: ${key_string}`)
+                        }
+                             
                     }
-                         
+                    message.channel.send('-----------------------------------') 
                 }
-                message.channel.send('-----------------------------------') 
             }
+
     
         }
 
