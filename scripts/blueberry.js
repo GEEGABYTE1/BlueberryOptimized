@@ -12,7 +12,7 @@ const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 const prefix = '-'
 
 // Contract Connection Initialization
-const contract_address = process.env.TEMP_CONTRACT_ADDRESS
+const contract_address = process.env.CONTRACT_ADDRESS
 const alchemy = new hre.ethers.providers.AlchemyProvider(
     'goerli',
     process.env.ALCHEMY_API_KEY
